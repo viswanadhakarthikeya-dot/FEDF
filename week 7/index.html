@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Management System</title>
+  <!-- Google Font: Poppins for clean and elegant sans-serif typography -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      /* Soft green gradient background matching the screenshot */
+      background: linear-gradient(135deg, #aef181 0%, #76ea9f 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px;
+    }
+
+    /* Centered Main White Card */
+    .card {
+      background-color: #ffffff;
+      border-radius: 24px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+      width: 100%;
+      max-width: 950px;
+      padding: 40px 50px;
+      transition: transform 0.3s ease;
+    }
+
+    /* Titles */
+    h1 {
+      color: #0d6e38;
+      font-size: 32px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      color: #0d6e38;
+      font-size: 18px;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .section-title {
+      color: #0d6e38;
+      font-size: 20px;
+      font-weight: 600;
+      text-align: center;
+      margin-top: 36px;
+      margin-bottom: 20px;
+    }
+
+    /* Input Forms styling */
+    .form-group {
+      margin-bottom: 16px;
+      width: 100%;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 14px 18px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 15px;
+      background-color: #ffffff;
+      border: 1.5px solid #d3f3df;
+      border-radius: 12px;
+      color: #333333;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    input::placeholder {
+      color: #999999;
+    }
+
+    input:focus, select:focus {
+      border-color: #109648;
+      box-shadow: 0 0 0 4px rgba(16, 150, 72, 0.12);
+    }
+
+    /* Add Student Button styling */
+    .btn-add {
+      width: 100%;
+      padding: 14px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      background-color: #109648;
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+      margin-top: 8px;
+    }
+
+    .btn-add:hover {
+      background-color: #0d7f3c;
+    }
+
+    .btn-add:active {
+      transform: scale(0.99);
+    }
+
+    /* Table styling matching the green bar design */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      margin-top: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+
+    thead tr {
+      background-color: #109648;
+      color: #ffffff;
+    }
+
+    th {
+      padding: 14px 20px;
+      font-size: 15px;
+      font-weight: 600;
+      text-align: center;
+      border: none;
+    }
+
+    /* Rounded corners for the green table header bar */
+    th:first-child {
+      border-top-left-radius: 12px;
+      border-bottom-left-radius: 12px;
+    }
+
+    th:last-child {
+      border-top-right-radius: 12px;
+      border-bottom-right-radius: 12px;
+    }
+
+    td {
+      padding: 16px 20px;
+      font-size: 15px;
+      color: #4a5568;
+      text-align: center;
+      border-bottom: 1.5px solid #f0f4f1;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Remove Button styling */
+    .btn-remove {
+      padding: 8px 18px;
+      background-color: #e53e3e;
+      color: #ffffff;
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+    }
+
+    .btn-remove:hover {
+      background-color: #c53030;
+    }
+
+    .btn-remove:active {
+      transform: scale(0.96);
+    }
+
+    /* Empty state */
+    .empty-row td {
+      color: #a0aec0;
+      padding: 30px;
+      font-style: italic;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 600px) {
+      .card {
+        padding: 30px 24px;
+      }
+      h1 {
+        font-size: 24px;
+      }
+      th, td {
+        padding: 10px 8px;
+        font-size: 13px;
+      }
+      .btn-remove {
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <!-- Header Titles -->
+    <h1>Student Management System</h1>
+    <div class="subtitle">Add Student</div>
+
+    <!-- Add Student Form -->
+    <form id="studentForm" onsubmit="addStudent(event)">
+      <div class="form-group">
+        <input type="text" id="rollNo" placeholder="Roll Number" required>
+      </div>
+      <div class="form-group">
+        <input type="text" id="studentName" placeholder="Student Name" required>
+      </div>
+      <div class="form-group">
+        <input type="email" id="email" placeholder="Email Address" required>
+      </div>
+      <div class="form-group">
+        <select id="branch" required>
+          <option value="" disabled selected>Select Branch</option>
+          <option value="CSE">CSE</option>
+          <option value="ECE">ECE</option>
+          <option value="EEE">EEE</option>
+          <option value="MECH">MECH</option>
+          <option value="CIVIL">CIVIL</option>
+          <option value="IT">IT</option>
+        </select>
+      </div>
+      <button type="submit" class="btn-add">Add Student</button>
+    </form>
+
+    <!-- Student List Section -->
+    <div class="section-title">Student List</div>
+    
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 20%;">Roll No</th>
+            <th style="width: 25%;">Name</th>
+            <th style="width: 30%;">Email</th>
+            <th style="width: 12%;">Branch</th>
+            <th style="width: 13%;">Action</th>
+          </tr>
+        </thead>
+        <tbody id="studentList">
+          <!-- Populated dynamically via JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    // State management synced to LocalStorage
+    // Prepopulated with seed data matching the user's screenshot exactly
+    let students = JSON.parse(localStorage.getItem("sms_simple_records")) || [
+      {
+        rollNo: "2520030189",
+        name: "Alluru Akshaya",
+        email: "alluruakshaya@gmail.com",
+        branch: "CSE"
+      }
+    ];
+
+    // Render list function
+    function renderStudents() {
+      const tbody = document.getElementById("studentList");
+      tbody.innerHTML = "";
+
+      if (students.length === 0) {
+        tbody.innerHTML = `
+          <tr class="empty-row">
+            <td colspan="5">No student records found. Add one above!</td>
+          </tr>
+        `;
+        return;
+      }
+
+      students.forEach((student, index) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${student.rollNo}</td>
+          <td>${student.name}</td>
+          <td>${student.email}</td>
+          <td>${student.branch}</td>
+          <td>
+            <button class="btn-remove" onclick="removeStudent(${index})">Remove</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Add Student functionality
+    function addStudent(event) {
+      event.preventDefault();
+
+      const rollNoInput = document.getElementById("rollNo");
+      const nameInput = document.getElementById("studentName");
+      const emailInput = document.getElementById("email");
+      const branchInput = document.getElementById("branch");
+
+      const rollNo = rollNoInput.value.trim();
+      const name = nameInput.value.trim();
+      const email = emailInput.value.trim();
+      const branch = branchInput.value;
+
+      // Basic client validation
+      if (!rollNo || !name || !email || !branch) {
+        alert("Please fill in all form details.");
+        return;
+      }
+
+      // Check for duplicate Roll No
+      const duplicate = students.some(s => s.rollNo.toLowerCase() === rollNo.toLowerCase());
+      if (duplicate) {
+        alert("A student with this Roll Number already exists!");
+        return;
+      }
+
+      // Insert new student
+      students.push({ rollNo, name, email, branch });
+
+      // Save to localStorage
+      localStorage.setItem("sms_simple_records", JSON.stringify(students));
+
+      // Reset Form fields
+      rollNoInput.value = "";
+      nameInput.value = "";
+      emailInput.value = "";
+      branchInput.value = "";
+
+      // Re-render student grid
+      renderStudents();
+    }
+
+    // Remove Student functionality
+    function removeStudent(index) {
+      if (confirm("Are you sure you want to remove this student?")) {
+        students.splice(index, 1);
+        localStorage.setItem("sms_simple_records", JSON.stringify(students));
+        renderStudents();
+      }
+    }
+
+    // Initial render
+    renderStudents();
+  </script>
+</body>
+</html>

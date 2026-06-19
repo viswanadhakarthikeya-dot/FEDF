@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- SEO Meta Tags -->
+  <title>YOYO | 10-Min Suite Delivery</title>
+  <meta name="description" content="Experience lightning-fast grocery, food, and amenities delivery at your hotel room door. YOYO Express Suite Delivery is available 24/7.">
+  <meta name="keywords" content="YOYO, grocery delivery, 10 min delivery, room service, hotel delivery, YOYO express">
+  <meta name="author" content="YOYO Express Partner">
+  
+  <!-- CSS Linkages -->
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- Javascript Controller (Deferred to load after layouts render) -->
+  <script src="app.js" defer></script>
+</head>
+<body>
+
+  <!-- Premium Sticky Blurred Navigation Header -->
+  <header>
+    <div style="display: flex; align-items: center;">
+      <a href="#" class="logo" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">YOYO</a>
+      
+      <!-- Location Address badge (Dynamic based on login session) -->
+      <div class="address-badge">
+        <span class="label">Delivery to</span>
+        <span class="suite-info">📍 Suite <span id="header-suite-number">...</span></span>
+      </div>
+    </div>
+    
+    <!-- Functional Search Bar -->
+    <div class="search-container">
+      <svg class="search-icon-svg" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+      </svg>
+      <input type="text" id="product-search" class="search-bar" placeholder="Search for milk, chips, drinks, essentials...">
+    </div>
+    
+    <nav>
+      <a href="#menu-anchor">Browse Items</a>
+      <a href="#order-tracker" onclick="setTimeout(() => checkActiveOrder(), 100)">Active Order</a>
+      <a href="#concierge-anchor">Amenities</a>
+    </nav>
+    
+    <div class="header-actions" style="display: flex; gap: 16px; align-items: center;">
+      <div class="tray-wrapper">
+        <button id="open-tray-btn" class="tray-btn">
+          🛒 Cart
+          <span id="tray-count" class="tray-badge" style="display: none;">0</span>
+        </button>
+      </div>
+
+      <!-- Dynamic Guest Portal Wrapper -->
+      <div id="user-portal" class="user-portal-wrapper">
+        <button id="user-portal-btn" class="user-portal-btn" onclick="toggleAuthModal()">
+          🔑 Guest Portal
+        </button>
+        <div id="user-portal-dropdown" class="user-portal-dropdown">
+          <div style="padding: 12px 24px 8px 24px; font-size: 13px; color: var(--text-muted); font-family: var(--font-sans);">
+            Logged in to Suite <span id="portal-suite-number" style="color: var(--primary-purple); font-weight: 700;"></span>
+          </div>
+          <div class="divider"></div>
+          <a href="#order-tracker" onclick="togglePortalDropdown(); setTimeout(() => checkActiveOrder(), 100);">🛎 My Active Order</a>
+          <a href="#concierge-anchor" onclick="togglePortalDropdown();">⚡ Request Amenities</a>
+          <div class="divider"></div>
+          <button id="portal-logout-btn" onclick="handlePortalLogout();" style="border-radius: 0;">🚪 Log Out</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Luxury Hero Presentation Section -->
+  <section class="hero">
+    <div class="hero-banner">
+      <div class="subtitle">⚡ YOYO Express Delivery</div>
+      <h1 class="title">Groceries & fresh bites <span>delivered in 10 mins</span></h1>
+      <p class="banner-desc">Daily essentials, snacks, beverages, and bath amenities directly to your suite door.</p>
+    </div>
+    
+    <!-- Dynamic Category Filter Toggles -->
+    <div class="categories">
+      <button class="active" data-category="dairy">🥛 Fresh & Dairy</button>
+      <button data-category="snacks">🍿 Munchies & Snacks</button>
+      <button data-category="drinks">🥤 Drinks & Beverages</button>
+      <button data-category="desserts">🍨 Ice Cream & Sweets</button>
+      <button data-category="essentials">🧼 Daily Essentials</button>
+    </div>
+  </section>
+
+  <!-- Dynamic Product Menu Grid (Anchor for internal links) -->
+  <div id="menu-anchor"></div>
+  <section class="grid-container">
+    <div id="menu-grid" class="grid">
+      <!-- Injected dynamically via JS framework inside app.js -->
+    </div>
+  </section>
+
+  <!-- Stateful Order Tracker Stepper Timeline Panel -->
+  <section id="order-tracker" class="tracker-section" style="display: none;">
+    <div class="tracker-card">
+      <div class="tracker-header">
+        <div class="tracker-title-box">
+          <h2>Active YOYO Session</h2>
+          <p id="tracker-status-text">Order Received & Confirmed</p>
+        </div>
+        <div class="countdown-box">
+          <div class="countdown-label">Arriving in</div>
+          <div id="tracker-timer-val" class="countdown-timer">10:00</div>
+        </div>
+      </div>
+      
+      <!-- Stepper Node Progress Timeline -->
+      <div class="stepper-container">
+        <div class="stepper-line-bg"></div>
+        <div id="tracker-progress-fill" class="stepper-line-fill"></div>
+        
+        <div class="stepper-steps">
+          <div class="tracker-step active" data-step="0">
+            <div class="step-node">📄</div>
+            <div class="step-label">Placed</div>
+          </div>
+          <div class="tracker-step" data-step="1">
+            <div class="step-node">📦</div>
+            <div class="step-label">Packed</div>
+          </div>
+          <div class="tracker-step" data-step="2">
+            <div class="step-node">🚴</div>
+            <div class="step-label">En Route</div>
+          </div>
+          <div class="tracker-step" data-step="3">
+            <div class="step-node">⚡</div>
+            <div class="step-label">Delivered</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Stepper Detailed Breakdown Layout -->
+      <div class="tracker-details-layout">
+        <div class="tracker-details-list">
+          <h4>Items Ordered</h4>
+          <ul id="tracker-items-list" style="list-style: none; padding: 0;">
+            <!-- Rendered Dynamically -->
+          </ul>
+        </div>
+        <div class="tracker-details-list">
+          <h4>Delivery Info</h4>
+          <p id="tracker-order-details" style="color: var(--text-muted); font-size: 13px; line-height: 1.6;">
+            <!-- Rendered Dynamically -->
+          </p>
+        </div>
+      </div>
+      
+      <button class="dismiss-tracker-btn" onclick="dismissTracker()">Close Tracking Panel</button>
+    </div>
+  </section>
+  
+  <!-- Stateful Stay Itinerary Timeline Section -->
+  <section id="stay-itinerary" class="itinerary-section">
+    <div class="itinerary-card">
+      <div class="itinerary-header">
+        <div class="itinerary-title-box">
+          <h2>Your Suite Delivery Pass</h2>
+          <p id="itinerary-stay-dates">Stay duration: [Loading stay dates...]</p>
+        </div>
+      </div>
+      
+      <!-- Chronological Timeline Container -->
+      <div class="itinerary-timeline-container">
+        <div class="timeline-line"></div>
+        <div id="itinerary-timeline-events" class="timeline-events">
+          <!-- Timed events dynamically rendered here -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Butler Concierge Quick-Actions Desk (Anchor for internal links) -->
+  <div id="concierge-anchor"></div>
+  <section class="concierge-grid">
+    
+    <!-- Action panel card -->
+    <div class="concierge-card">
+      <h2>⚡ YOYO Instant Amenities</h2>
+      <p>Need room essentials immediately? Tap below to notify dispatch. Requests are delivered to your suite door in less than 10 minutes.</p>
+      
+      <div class="butler-actions-grid">
+        <button class="butler-action-btn" data-service="ice">
+          <div class="btn-icon">❄️</div>
+          <div class="btn-title">Chilled Ice Cubes</div>
+          <div class="btn-subtitle">1kg bag for beverages</div>
+        </button>
+        <button class="butler-action-btn" data-service="towels">
+          <div class="btn-icon">🧖‍♂️</div>
+          <div class="btn-title">Fresh Hand Towels</div>
+          <div class="btn-subtitle">Plush cotton replenishment</div>
+        </button>
+        <button class="butler-action-btn" data-service="hangers">
+          <div class="btn-icon">👔</div>
+          <div class="btn-title">Garment Hangers</div>
+          <div class="btn-subtitle">Pack of 5 wooden hangers</div>
+        </button>
+        <button class="butler-action-btn" data-service="turndown">
+          <div class="btn-icon">🧼</div>
+          <div class="btn-title">Room Amenities Pack</div>
+          <div class="btn-subtitle">Slippers, shower gel & kit</div>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Dispatch Monitor logger card -->
+    <div class="concierge-card">
+      <h2>Amenity Dispatch Logs</h2>
+      <p>Real-time tracking of complimentary room-convenience concierge dispatches.</p>
+      <div id="butler-logs" style="margin-top: 10px;">
+        <div style="color: var(--text-muted); text-align: center; padding: 40px; font-size: 13px;">
+          🛎 No active logs. Tap an amenity to request.
+        </div>
+      </div>
+    </div>
+    
+  </section>
+
+  <!-- Floating Tray Cart Sidebar Drawer -->
+  <div id="tray-drawer" class="drawer">
+    <div class="drawer-header">
+      <h2>Your Basket</h2>
+      <button id="close-tray-btn" class="close-btn">✕</button>
+    </div>
+    
+    <div class="drawer-body">
+      <!-- Active item rows (Dynamically computed) -->
+      <div id="cart-items" class="cart-items-wrapper">
+        <!-- Rendered dynamically -->
+      </div>
+      
+      <!-- Interactive Checkout Form (Visible only when tray is occupied) -->
+      <div id="checkout-block">
+        <div class="checkout-section-title">Bill Summary</div>
+        <div class="pricing-summary">
+          <div class="price-row">
+            <span>Subtotal</span>
+            <span id="price-subtotal">$0.00</span>
+          </div>
+          <div class="price-row">
+            <span>Handling & Packaging Charge</span>
+            <span id="price-service">$0.00</span>
+          </div>
+          <div class="price-row">
+            <span>GST & Tax (8%)</span>
+            <span id="price-tax">$0.00</span>
+          </div>
+          <div class="price-row">
+            <span>YOYO 10-Min Delivery Fee</span>
+            <span id="price-delivery">$0.00</span>
+          </div>
+          <div class="price-row grand-total">
+            <span>To Pay (Charge to Room)</span>
+            <span id="price-total">$0.00</span>
+          </div>
+        </div>
+        
+        <div class="checkout-section-title">Delivery Details</div>
+        <form id="checkout-form" style="display: none;">
+          <div class="form-group">
+            <label for="room-number">Suite / Room Number</label>
+            <input type="text" id="room-number" placeholder="Enter suite number (e.g. 402)" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="delivery-time">Delivery Schedule</label>
+            <select id="delivery-time" onchange="toggleScheduledTimeInput()">
+              <option value="asap">Deliver Immediately (10-Min)</option>
+              <option value="scheduled">Schedule specific time</option>
+            </select>
+          </div>
+          
+          <div id="scheduled-time-group" class="form-group" style="display: none;">
+            <label for="scheduled-delivery-time">Select Date & Time</label>
+            <input type="datetime-local" id="scheduled-delivery-time">
+          </div>
+          
+          <div class="form-group">
+            <label for="special-notes">Delivery Instructions for Rider</label>
+            <textarea id="special-notes" rows="3" placeholder="E.g., Ring bell, leave outside door, knock gently..."></textarea>
+          </div>
+          
+          <button type="submit" class="checkout-submit-btn">Place Order & Charge Room</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Background overlay when drawer slides open -->
+  <div id="drawer-overlay" class="drawer-overlay"></div>
+
+  <!-- Dynamic Notification Stack Container -->
+  <div id="toast-container"></div>
+
+  <!-- Unified Single-Page Authentication Modal Overlay -->
+  <div id="auth-modal" class="auth-modal-overlay" style="display: none;">
+    <div class="auth-card" style="position: relative;">
+      <!-- Close button -->
+      <button class="close-btn" onclick="toggleAuthModal()" style="position: absolute; top: 25px; right: 30px; font-size: 20px; border: none; background: transparent; cursor: pointer;">✕</button>
+      
+      <!-- Logo & Branding -->
+      <div class="auth-header" style="margin-bottom: 25px;">
+        <span class="auth-logo">YOYO</span>
+        <div id="auth-modal-subtitle" class="auth-subtitle">Suite Guest Access</div>
+      </div>
+
+      <!-- General Modal Notification -->
+      <div id="auth-modal-notification" style="display: none; margin-bottom: 20px; padding: 15px; border-radius: 12px; font-size: 13px; text-align: center;"></div>
+
+      <!-- 1. LOGIN VIEW -->
+      <div id="auth-view-login">
+        <form id="modal-login-form" class="auth-form" onsubmit="handleModalLogin(event)">
+          <div class="form-group">
+            <label for="modal-login-email">Email Address</label>
+            <input type="email" id="modal-login-email" placeholder="e.g. hamilton@yoyo.com" required>
+          </div>
+          <div class="form-group">
+            <label for="modal-login-password">Password</label>
+            <input type="password" id="modal-login-password" placeholder="••••••••••••" required>
+          </div>
+          <div class="auth-footer-links">
+            <a href="#" class="auth-link" onclick="switchAuthView('forgot')">Forgot Password?</a>
+            <a href="#" class="auth-link" onclick="switchAuthView('signup')">Register Suite</a>
+          </div>
+          <button type="submit" class="auth-submit-btn">Enter Portal</button>
+        </form>
+
+        <!-- Preset Account Info Box for easy testing -->
+        <div style="margin-top: 25px; padding: 16px; background: var(--primary-purple-light); border: 1px dashed var(--primary-purple); border-radius: 12px; font-size: 12px; color: var(--text-muted); text-align: center; line-height: 1.6;">
+          <strong style="color: var(--primary-purple); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 4px;">Exclusive Demo Credentials</strong>
+          Email: <span style="color: var(--text-primary); font-weight: 600;">hamilton@yoyo.com</span> &nbsp;|&nbsp; Pass: <span style="color: var(--text-primary); font-weight: 600;">luxurypassword</span>
+        </div>
+      </div>
+
+      <!-- 2. SIGN UP VIEW -->
+      <div id="auth-view-signup" style="display: none;">
+        <form id="modal-signup-form" class="auth-form" onsubmit="handleModalSignup(event)">
+          <div style="display: grid; grid-template-columns: 100px 1fr; gap: 15px;">
+            <div class="form-group">
+              <label for="modal-signup-title">Title</label>
+              <select id="modal-signup-title" required>
+                <option value="Lord">Lord</option>
+                <option value="Lady">Lady</option>
+                <option value="Sir">Sir</option>
+                <option value="Dr.">Dr.</option>
+                <option value="Mr.">Mr.</option>
+                <option value="Mrs.">Mrs.</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="modal-signup-name">Full Name</label>
+              <input type="text" id="modal-signup-name" placeholder="e.g. Genevieve Sterling" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="modal-signup-suite">Suite / Room Number</label>
+            <input type="text" id="modal-signup-suite" placeholder="e.g. 502" required pattern="^[0-9]{2,4}[A-Za-z]?$">
+          </div>
+          <div class="form-group">
+            <label for="modal-signup-email">Email Address</label>
+            <input type="email" id="modal-signup-email" placeholder="e.g. genevieve@sterling.com" required>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div class="form-group">
+              <label for="modal-signup-checkin">Check-In Date</label>
+              <input type="datetime-local" id="modal-signup-checkin" required>
+            </div>
+            <div class="form-group">
+              <label for="modal-signup-checkout">Check-Out Date</label>
+              <input type="datetime-local" id="modal-signup-checkout" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="modal-signup-password">Password</label>
+            <input type="password" id="modal-signup-password" placeholder="••••••••••••" required>
+          </div>
+          <div class="form-group">
+            <label for="modal-signup-confirm">Confirm Password</label>
+            <input type="password" id="modal-signup-confirm" placeholder="••••••••••••" required>
+          </div>
+          <div class="auth-footer-links" style="justify-content: center;">
+            <a href="#" class="auth-link" onclick="switchAuthView('login')">Already Registered? Log In</a>
+          </div>
+          <button type="submit" class="auth-submit-btn">Authenticate Suite</button>
+        </form>
+      </div>
+
+      <!-- 3. FORGOT PASSWORD VIEW -->
+      <div id="auth-view-forgot" style="display: none;">
+        <div id="modal-recovery-form-block">
+          <div style="font-size: 13px; color: var(--text-muted); text-align: center; margin-bottom: 20px; line-height: 1.6;">
+            Enter your registered email address to receive an encrypted digital recovery link.
+          </div>
+          <form id="modal-forgot-form" class="auth-form" onsubmit="handleModalForgot(event)">
+            <div class="form-group">
+              <label for="modal-recovery-email">Email Address</label>
+              <input type="email" id="modal-recovery-email" placeholder="e.g. hamilton@yoyo.com" required>
+            </div>
+            <div class="auth-footer-links" style="justify-content: center;">
+              <a href="#" class="auth-link" onclick="switchAuthView('login')">Return to Login</a>
+            </div>
+            <button type="submit" class="auth-submit-btn">Recover Password</button>
+          </form>
+        </div>
+        
+        <!-- Recovery Success Panel -->
+        <div id="modal-recovery-success" style="display: none;">
+          <div class="forgot-success-box" style="margin-top: 0; padding: 20px 15px;">
+            <div style="font-size: 32px; margin-bottom: 12px; color: var(--primary-purple);">⚡</div>
+            <h4 style="font-family: var(--font-title); font-size: 18px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px;">Reset Link Dispatched</h4>
+            <p style="color: var(--text-muted); font-size: 13px; line-height: 1.6; margin-bottom: 16px;">
+              Encrypted recovery key has been dispatched to <strong id="modal-recovery-target-email" style="color: var(--text-primary);"></strong>.
+            </p>
+            <button onclick="switchAuthView('login')" class="checkout-submit-btn" style="width: 100%;">Back to Login</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  
+  <!-- Stay Confirmation Modal Overlay -->
+  <div id="confirm-stay-modal" class="auth-modal-overlay" style="display: none;">
+    <div class="auth-card">
+      <div class="auth-header">
+        <span class="auth-logo">YOYO</span>
+        <div class="auth-subtitle">Confirm Stay Details</div>
+      </div>
+      <div style="font-size: 13px; color: var(--text-muted); text-align: center; margin-bottom: 20px; line-height: 1.6;">
+        Welcome to your suite! Please verify and confirm your stay check-in and departure dates to activate YOYO delivery services.
+      </div>
+      <form id="stay-confirm-form" class="auth-form" onsubmit="handleStayConfirm(event)">
+        <div class="form-group">
+          <label for="confirm-checkin-date">Check-In Date & Time</label>
+          <input type="datetime-local" id="confirm-checkin-date" required>
+        </div>
+        <div class="form-group">
+          <label for="confirm-checkout-date">Check-Out Date & Time</label>
+          <input type="datetime-local" id="confirm-checkout-date" required>
+        </div>
+        <button type="submit" class="auth-submit-btn" style="margin-top: 10px;">Confirm & Activate Pass</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Stay Extension/Expiration Modal Overlay -->
+  <div id="extend-stay-modal" class="auth-modal-overlay" style="display: none;">
+    <div class="auth-card" style="text-align: center;">
+      <div class="auth-header">
+        <span class="auth-logo">YOYO</span>
+        <div class="auth-subtitle">Stay Duration Completed</div>
+      </div>
+      
+      <!-- Primary Decision Block -->
+      <div id="extend-decision-block">
+        <div style="font-size: 38px; margin-bottom: 15px; color: var(--primary-purple);">⚡</div>
+        <h4 style="font-family: var(--font-title); font-size: 20px; font-weight: 700; color: var(--text-primary); margin-bottom: 12px;">Departure Notification</h4>
+        <p style="color: var(--text-muted); font-size: 13px; line-height: 1.6; margin-bottom: 24px;">
+          Your scheduled check-out time has arrived. Would you like to extend your suite booking to keep using YOYO Express?
+        </p>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <button onclick="showExtensionForm()" class="auth-submit-btn">Extend My Stay</button>
+          <button onclick="handlePortalLogout()" class="dismiss-tracker-btn" style="width: 100%; font-weight: 700; padding: 14px 0; border-radius: 12px;">No, Log Out Now</button>
+        </div>
+      </div>
+
+      <!-- Extension Input Block -->
+      <div id="extend-form-block" style="display: none;">
+        <div style="font-size: 13px; color: var(--text-muted); text-align: center; margin-bottom: 20px; line-height: 1.6;">
+          Specify your new check-out departure date and time below to extend your booking.
+        </div>
+        <form id="stay-extend-form" class="auth-form" onsubmit="handleStayExtension(event)">
+          <div class="form-group" style="text-align: left;">
+            <label for="extend-checkout-date">New Check-Out Date</label>
+            <input type="datetime-local" id="extend-checkout-date" required>
+          </div>
+          <div style="display: flex; gap: 10px; margin-top: 15px;">
+            <button type="submit" class="auth-submit-btn" style="flex: 1;">Extend Stay</button>
+            <button type="button" onclick="cancelExtension()" class="dismiss-tracker-btn" style="margin-top: 0; padding: 0 20px; border-radius: 12px; flex: 1;">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

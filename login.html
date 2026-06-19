@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YOYO | Suite Login</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body class="auth-body">
+
+  <div class="auth-card">
+    <div class="auth-header">
+      <span class="auth-logo">YOYO</span>
+      <div id="auth-modal-subtitle" class="auth-subtitle">Suite Guest Access</div>
+    </div>
+
+    <div id="auth-page-notification" style="display: none; margin-bottom: 20px; padding: 15px; border-radius: 12px; font-size: 13px; text-align: center;"></div>
+
+    <!-- LOGIN PANEL -->
+    <div id="auth-view-login">
+      <form id="page-login-form" class="auth-form" onsubmit="handlePageLogin(event)">
+        <div class="form-group">
+          <label for="page-login-email">Email Address</label>
+          <input type="email" id="page-login-email" placeholder="e.g. hamilton@yoyo.com" required>
+        </div>
+        <div class="form-group">
+          <label for="page-login-password">Password</label>
+          <input type="password" id="page-login-password" placeholder="••••••••••••" required>
+        </div>
+        <div class="auth-footer-links">
+          <a href="#" class="auth-link" onclick="switchPageAuthView('forgot')">Forgot Password?</a>
+          <a href="#" class="auth-link" onclick="switchPageAuthView('signup')">Register Suite</a>
+        </div>
+        <button type="submit" class="auth-submit-btn">Unlock Portal</button>
+      </form>
+      
+      <!-- Demo credentials helper -->
+      <div style="margin-top: 25px; padding: 16px; background: var(--primary-purple-light); border: 1px dashed var(--primary-purple); border-radius: 12px; font-size: 12px; color: var(--text-muted); text-align: center; line-height: 1.6;">
+        <strong style="color: var(--primary-purple); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 4px;">Exclusive Demo Credentials</strong>
+        Email: <span style="color: var(--text-primary); font-weight: 600;">hamilton@yoyo.com</span> &nbsp;|&nbsp; Pass: <span style="color: var(--text-primary); font-weight: 600;">luxurypassword</span>
+      </div>
+    </div>
+
+    <!-- SIGN UP PANEL -->
+    <div id="auth-view-signup" style="display: none;">
+      <form id="page-signup-form" class="auth-form" onsubmit="handlePageSignup(event)">
+        <div style="display: grid; grid-template-columns: 100px 1fr; gap: 15px;">
+          <div class="form-group">
+            <label for="page-signup-title">Title</label>
+            <select id="page-signup-title" required>
+              <option value="Lord">Lord</option>
+              <option value="Lady">Lady</option>
+              <option value="Mr.">Mr.</option>
+              <option value="Mrs.">Mrs.</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="page-signup-name">Full Name</label>
+            <input type="text" id="page-signup-name" placeholder="e.g. Genevieve Sterling" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="page-signup-suite">Suite / Room Number</label>
+          <input type="text" id="page-signup-suite" placeholder="e.g. 502" required pattern="^[0-9]{2,4}[A-Za-z]?$">
+        </div>
+        <div class="form-group">
+          <label for="page-signup-email">Email Address</label>
+          <input type="email" id="page-signup-email" placeholder="e.g. genevieve@sterling.com" required>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+          <div class="form-group">
+            <label for="page-signup-checkin">Check-In Date</label>
+            <input type="datetime-local" id="page-signup-checkin" required>
+          </div>
+          <div class="form-group">
+            <label for="page-signup-checkout">Check-Out Date</label>
+            <input type="datetime-local" id="page-signup-checkout" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="page-signup-password">Password</label>
+          <input type="password" id="page-signup-password" placeholder="••••••••••••" required>
+        </div>
+        <div class="form-group">
+          <label for="page-signup-confirm">Confirm Password</label>
+          <input type="password" id="page-signup-confirm" placeholder="••••••••••••" required>
+        </div>
+        <div class="auth-footer-links" style="justify-content: center;">
+          <a href="#" class="auth-link" onclick="switchPageAuthView('login')">Already Registered? Log In</a>
+        </div>
+        <button type="submit" class="auth-submit-btn">Authenticate Suite</button>
+      </form>
+    </div>
+
+    <!-- FORGOT PASSWORD PANEL -->
+    <div id="auth-view-forgot" style="display: none;">
+      <div id="page-recovery-form-block">
+        <form id="page-forgot-form" class="auth-form" onsubmit="handlePageForgot(event)">
+          <div class="form-group">
+            <label for="page-recovery-email">Email Address</label>
+            <input type="email" id="page-recovery-email" placeholder="e.g. hamilton@yoyo.com" required>
+          </div>
+          <div class="auth-footer-links" style="justify-content: center;">
+            <a href="#" class="auth-link" onclick="switchPageAuthView('login')">Return to Login</a>
+          </div>
+          <button type="submit" class="auth-submit-btn">Recover Password</button>
+        </form>
+      </div>
+      
+      <div id="page-recovery-success" style="display: none;">
+        <div class="forgot-success-box" style="margin-top: 0; padding: 20px 15px;">
+          <div style="font-size: 32px; margin-bottom: 12px; color: var(--primary-purple);">⚡</div>
+          <h4 style="font-family: var(--font-title); font-size: 18px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px;">Reset Link Dispatched</h4>
+          <p style="color: var(--text-muted); font-size: 13px; line-height: 1.6; margin-bottom: 16px;">
+            Encrypted recovery key has been dispatched to <strong id="page-recovery-target-email" style="color: var(--text-primary);"></strong>.
+          </p>
+          <button onclick="switchPageAuthView('login')" class="checkout-submit-btn" style="width: 100%;">Back to Login</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
